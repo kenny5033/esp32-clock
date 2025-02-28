@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "author": "Kenny Howes",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-tm1637-7segment",
+      "id": "sevseg1",
+      "top": -120,
+      "left": -250,
+      "attrs": { "color": "red" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:5V", "sevseg1:VCC", "red", [ "h-20", "v-270" ] ],
+    [ "esp:GND.1", "sevseg1:GND", "black", [ "h-30", "v-210" ] ],
+    [ "esp:22", "sevseg1:CLK", "green", [ "h20", "v-125" ] ],
+    [ "esp:21", "sevseg1:DIO", "green", [ "h10", "v-125" ] ]
+  ],
+  "dependencies": {}
+}

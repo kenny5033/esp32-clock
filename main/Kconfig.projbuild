@@ -1,0 +1,25 @@
+menu "Clock Config"
+    config WIFI_SSID
+        string "SSID for WiFi connection"
+        default ""
+    
+    config EAP_ID
+        string "EAP ID for WiFi connection"
+        default ""
+    
+    config WIFI_USER
+        string "Username for WiFi connection"
+        default ""
+
+    config WIFI_PASS
+        string "Password for WiFi connection"
+        default ""
+
+    config SNTP_RETRYS
+        int "Number of retries for SNTP connection"
+        default 10
+
+    config WIFI_RETRYS
+        int "Number of retries for WiFi connection"
+        default 5
+endmenu
