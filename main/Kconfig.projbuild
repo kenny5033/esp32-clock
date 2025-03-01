@@ -1,13 +1,19 @@
 menu "Clock Config"
+    config WIFI_EAP
+        bool "Whether to use enterprise WiFi or not."
+        default y
+
     config WIFI_SSID
         string "SSID for WiFi connection"
         default ""
     
-    config EAP_ID
+    config WIFI_ID
+        depends on WIFI_EAP
         string "EAP ID for WiFi connection"
         default ""
     
     config WIFI_USER
+        depends on WIFI_EAP
         string "Username for WiFi connection"
         default ""
 

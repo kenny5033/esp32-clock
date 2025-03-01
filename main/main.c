@@ -15,7 +15,7 @@
 #include "freertos/task.h"
 
 #define WIFI_SSID     CONFIG_WIFI_SSID
-#define EAP_ID        CONFIG_EAP_ID
+#define WIFI_ID       CONFIG_WIFI_ID
 #define WIFI_USER     CONFIG_WIFI_USER
 #define WIFI_PASS     CONFIG_WIFI_PASS
 #define SNTP_RETRYS   CONFIG_SNTP_RETRYS
@@ -101,12 +101,17 @@ static void wifi_start(void) {
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_eap_client_set_identity((uint8_t *)EAP_ID, strlen(EAP_ID)));
 
-    ESP_ERROR_CHECK(esp_eap_client_set_username((uint8_t*)WIFI_USER, strlen(WIFI_USER)));
-    ESP_ERROR_CHECK(esp_eap_client_set_password((uint8_t*)WIFI_PASS, strlen(WIFI_PASS)));
+    if (WIFI_PASS[0] != '\0') // ensure cred is not empty string, will break following function if strlen == 0
+        ESP_ERROR_CHECK(esp_eap_client_set_password((uint8_t*)WIFI_PASS, strlen(WIFI_PASS)));
     
+    #if defined(CONFIG_WIFI_EAP)
+    if (WIFI_ID[0] != '\0') // ensure cred is not empty string, will break following function if strlen == 0
+        ESP_ERROR_CHECK(esp_eap_client_set_identity((uint8_t*)WIFI_ID, strlen(WIFI_ID)));
+    if (WIFI_USER[0] != '\0') // ensure cred is not empty string, will break following function if strlen == 0
+        ESP_ERROR_CHECK(esp_eap_client_set_username((uint8_t*)WIFI_USER, strlen(WIFI_USER)));
     ESP_ERROR_CHECK(esp_wifi_sta_enterprise_enable());
+    #endif
     ESP_ERROR_CHECK(esp_wifi_start());
     ESP_LOGI(TAG, "Wifi started");
 }
