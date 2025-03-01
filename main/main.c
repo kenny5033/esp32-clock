@@ -13,6 +13,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
+#include "esp_http_server.h"
+#include "webInterface.h"
 
 #define WIFI_SSID     CONFIG_WIFI_SSID
 #define WIFI_ID       CONFIG_WIFI_ID
@@ -116,6 +118,14 @@ static void wifi_start(void) {
     ESP_LOGI(TAG, "Wifi started");
 }
 
+static void web_interface_start(void) {
+  httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+  httpd_handle_t server = NULL; // initialize in httpd_start()
+  ESP_ERROR_CHECK(httpd_start(&server, &config));
+  httpd_register_uri_handler(server, &getHome);
+  httpd_register_uri_handler(server, &postHome);
+}
+
 static void driveTM1637(void* pvParameters) {
     // CLK: 22
     // DIO: 21
@@ -146,16 +156,19 @@ static void driveTM1637(void* pvParameters) {
 void app_main(void) {
     ESP_LOGI(TAG, "Connecting to wifi");
     ESP_ERROR_CHECK(nvs_flash_init());
-
     wifi_start();
     while (!(CONNECTED_BIT & xEventGroupGetBits(wifi_event_group)))
         vTaskDelay(pdMS_TO_TICKS(1000));
+
     ESP_LOGI(TAG, "Starting SNTP");
     sntp_start();
-    ESP_LOGI(TAG, "Setup done");
+
+    ESP_LOGI(TAG, "Starting Web Interface");
+    web_interface_start();
 
     setenv("TZ", "EST5EDT,M3.2.0/2:00:00,M11.1.0/2:00:00", 1);
     tzset();
+    ESP_LOGI(TAG, "Setup done");
 
     xTaskCreate(driveTM1637, "driveTM1637", 1 << 11, NULL, 5, NULL);
 }

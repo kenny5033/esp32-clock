@@ -2,3 +2,7 @@
 version = 1
 firmware = "build/flasher_args.json"
 elf = "build/esp32-clock.bin"
+
+[[net.forward]]
+from = "localhost:8080"
+to = "target:80"
